@@ -1,5 +1,5 @@
 "use client";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 // ==========================================
 // 1. DATA LAYOUT (Structured Clinical Blogs)
@@ -7,78 +7,70 @@ import { useState } from 'react';
 class HarvardFitnessContent {
     constructor() {
         this.introduction = "Physical activity is one of the most powerful tools for optimizing human health. According to Harvard Health publishing, structured exercise regulates blood pressure, sharpens cognitive function, and optimizes metabolic performance.";
-
-        // ADDED: Trust/credibility strip shown right under the hero.
         this.stats = [
             { label: "Active Members", value: "12,400+" },
             { label: "Certified Coaches", value: "38" },
             { label: "Avg. Member Rating", value: "4.9 / 5" },
             { label: "Plans Delivered", value: "50,000+" }
         ];
-
-        // ADDED: Drives the redesigned home page "what we offer" cards.
-        // Each one links to a real page already in the app instead of
-        // sitting there as decoration.
         this.services = [
             {
                 id: "s1",
-                icon: "👑",
+                code: "TRN",
                 title: "Elite Personal Trainers",
                 desc: "1-on-1 coaching mapped to your exact biometric profile and goals.",
                 detail: "4 specialists on roster — modeling, longevity, powerlifting & metabolic recovery.",
-                image: "https://picsum.photos/seed/trainercard/640/420",
+                image: "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?q=80&w=1000&auto=format&fit=crop",
                 page: "exercise",
                 cta: "Meet the coaches",
                 badge: null
             },
             {
                 id: "s2",
-                icon: "🥗",
+                code: "DTE",
                 title: "Precision Diet Plans",
                 desc: "Targeted caloric thresholds and macro ratios, built from your BMI.",
                 detail: "Run the 30-second calculator and get a matched food list instantly.",
-                image: "https://picsum.photos/seed/dietcard/640/420",
+                image: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&w=640&q=80",
                 page: "diets",
                 cta: "Calculate my intake",
                 badge: null
             },
             {
                 id: "s3",
-                icon: "💊",
+                code: "SUP",
                 title: "Tested Supplements",
                 desc: "Clinical-grade compounds, screened for purity and accurate dosage.",
                 detail: "Catalogue is in final review — join the list to get first access.",
-                image: "https://picsum.photos/seed/supplementcard/640/420",
+                image: "https://images.unsplash.com/photo-1579722820308-d74e571900a9?auto=format&fit=crop&w=640&q=80",
                 page: "signup",
                 cta: "Join the waitlist",
                 badge: "Coming Soon"
             }
         ];
-
         this.facts = {
             habits: [
-                { id: "h1", icon: "😴", stat: "7–9 hrs", text: "Consistent sleep architecture optimizes human growth hormone release and muscle recovery." },
-                { id: "h2", icon: "🚶", stat: "Every 30 min", text: "A brief 5-minute walking break after sitting for 30 minutes mitigates arterial stiffness." },
-                { id: "h3", icon: "💧", stat: "Daily", text: "Sustained hydration directly regulates metabolic throughput and neuromuscular execution velocity." },
-                { id: "h4", icon: "☀️", stat: "AM", text: "Early morning sunlight exposure anchors circadian rhythms, optimizing nighttime melatonin production." },
-                { id: "h5", icon: "📈", stat: "+40%", text: "Tracking daily progress increases long-term training consistency metrics by up to 40%." }
+                { id: "h1", code: "SLP", stat: "7–9 hrs", text: "Consistent sleep architecture optimizes human growth hormone release and muscle recovery." },
+                { id: "h2", code: "ACT", stat: "Every 30 min", text: "A brief 5-minute walking break after sitting for 30 minutes mitigates arterial stiffness." },
+                { id: "h3", code: "HYD", stat: "Daily", text: "Sustained hydration directly regulates metabolic throughput and neuromuscular execution velocity." },
+                { id: "h4", code: "LGT", stat: "AM", text: "Early morning sunlight exposure anchors circadian rhythms, optimizing nighttime melatonin production." },
+                { id: "h5", code: "TRK", stat: "+40%", text: "Tracking daily progress increases long-term training consistency metrics by up to 40%." }
             ],
             diets: [
-                { id: "d1", icon: "🍗", stat: "1.6–2.2g/kg", text: "A protein threshold per kilogram of total lean mass is vital to preserve muscle structure." },
-                { id: "d2", icon: "🌾", stat: "35g/day", text: "Consuming complex micronutrient-dense fibers regulates glucose levels, flattening insulin spikes." },
-                { id: "d3", icon: "🐟", stat: "Omega-3", text: "Essential fatty acids reduce system-wide cellular inflammation and optimize joint recovery." },
-                { id: "d4", icon: "🔥", stat: "30%", text: "Thermogenesis from protein digestion burns up to 30% of its own caloric energy value during breakdown." },
-                { id: "d5", icon: "⏱️", stat: "Time-restricted", text: "Time-restricted eating windows can lower oxidative stress and improve cellular repair mechanisms." }
+                { id: "d1", code: "PRT", stat: "1.6–2.2g/kg", text: "A protein threshold per kilogram of total lean mass is vital to preserve muscle structure." },
+                { id: "d2", code: "FBR", stat: "35g/day", text: "Consuming complex micronutrient-dense fibers regulates glucose levels, flattening insulin spikes." },
+                { id: "d3", code: "OMG", stat: "Omega-3", text: "Essential fatty acids reduce system-wide cellular inflammation and optimize joint recovery." },
+                { id: "d4", code: "TRM", stat: "30%", text: "Thermogenesis from protein digestion burns up to 30% of its own caloric energy value during breakdown." },
+                { id: "d5", code: "TME", stat: "Time-restricted", text: "Time-restricted eating windows can lower oxidative stress and improve cellular repair mechanisms." }
             ],
             exercise: [
-                { id: "e1", icon: "❤️", stat: "-50%", text: "Cardiorespiratory execution reduces all-cause mortality risk parameters by up to 50% over a lifetime." },
-                { id: "e2", icon: "⏳", stat: "+3 yrs", text: "Just 15 minutes of physical activity daily increases baseline life expectancy indicators by 3 years." },
-                { id: "e3", icon: "🦴", stat: "Bone density", text: "Resistance training preserves bone mineral density, preventing age-related osteopenia and sarcopenia." },
-                { id: "e4", icon: "⚡", stat: "EPOC", text: "High-Intensity Interval Training triggers excess post-exercise oxygen consumption, burning calories for hours." },
-                { id: "e5", icon: "🏋️", stat: "Compound lifts", text: "Compound movements recruit multiple muscle motor units simultaneously, maximizing strength output." }
+                { id: "e1", code: "CRD", stat: "-50%", text: "Cardiorespiratory execution reduces all-cause mortality risk parameters by up to 50% over a lifetime." },
+                { id: "e2", code: "LNG", stat: "+3 yrs", text: "Just 15 minutes of physical activity daily increases baseline life expectancy indicators by 3 years." },
+                { id: "e3", code: "BND", stat: "Bone density", text: "Resistance training preserves bone mineral density, preventing age-related osteopenia and sarcopenia." },
+                { id: "e4", code: "EPC", stat: "EPOC", text: "High-Intensity Interval Training triggers excess post-exercise oxygen consumption, burning calories for hours." },
+                { id: "e5", code: "CMP", stat: "Compound lifts", text: "Compound movements recruit multiple muscle motor units simultaneously, maximizing strength output." }
             ]
         };
-
         this.tasks = [
             { id: 1, title: "Hydration Target", description: "Consume 3.5 Liters of water aligned with metabolic output." },
             { id: 2, title: "Protein Threshold", description: "Hit 1.6g of protein per kilogram of target body weight." },
@@ -109,87 +101,22 @@ class HarvardFitnessContent {
                 summary: "Abundant evidence confirms regular physical activity directly boosts memory, sharpens spatial thinking skills, and stimulates neurogenesis to stave off cognitive decline.",
                 citation: "Harvard Health Publishing — April 2026",
                 url: "https://www.health.harvard.edu/topics/exercise-and-fitness"
-            },
-            {
-                id: "b4",
-                title: "The 150-Minute Rule: Minimum Thresholds Explained",
-                category: "Clinical Guidelines",
-                summary: "National and federal guidelines recommend a minimum baseline of 150 minutes of moderate-intensity or 75 minutes of vigorous cardio per week to reduce overall chronic disease risk.",
-                citation: "Harvard Health Publishing — November 2025",
-                url: "https://www.health.harvard.edu/topics/exercise-and-fitness"
-            },
-            {
-                id: "b5",
-                title: "Kettlebell Kinetics: Full Body Motor Recruitment",
-                category: "Strength Training",
-                summary: "Moving beyond basic swings into specialized variations like bottoms-up carries and around-the-world passes triggers high-intensity core activation and stabilizes skeletal alignment.",
-                citation: "Harvard Health Publishing — June 2026",
-                url: "https://www.health.harvard.edu/topics/exercise-and-fitness"
             }
         ];
-
-        // ADDED: Searchable exercise database for the Exercise page,
-        // styled after wger.de's exercise overview (filter sidebar +
-        // search box + card grid). Every image is a real, working
-        // Unsplash photo published under the free Unsplash License.
-        this.exerciseLibrary = [
-            {
-                id: "bench-press",
-                name: "Barbell Bench Press",
-                category: "Chest",
-                equipment: "Barbell, Flat Bench",
-                difficulty: "Intermediate",
-                description: "A horizontal pressing movement that builds the chest, front shoulders, and triceps.",
-                image: "https://images.unsplash.com/photo-1733517301178-312a6f694f2d?auto=format&fit=crop&w=800&q=80",
-                imageAlt: "A man performing a barbell bench press in a gym"
-            },
-            {
-                id: "shoulder-press",
-                name: "Dumbbell Shoulder Press",
-                category: "Shoulders",
-                equipment: "Dumbbells, Bench or Standing",
-                difficulty: "Beginner",
-                description: "An overhead pressing movement that targets the deltoids and engages the triceps as stabilizers.",
-                image: "https://images.unsplash.com/photo-1556817411-31ae72fa3ea0?auto=format&fit=crop&w=800&q=80",
-                imageAlt: "A man holding a pair of dumbbells before an overhead press"
-            },
-            {
-                id: "back-squat",
-                name: "Barbell Back Squat",
-                category: "Legs",
-                equipment: "Barbell, Squat Rack",
-                difficulty: "Intermediate",
-                description: "A compound lower-body movement that develops the quadriceps, glutes, and hamstrings.",
-                image: "https://images.unsplash.com/photo-1642267379398-c430d619019d?auto=format&fit=crop&w=800&q=80",
-                imageAlt: "A man performing a barbell back squat"
-            },
-            {
-                id: "seated-row",
-                name: "Seated Cable Row",
-                category: "Back",
-                equipment: "Cable Machine",
-                difficulty: "Beginner",
-                description: "A horizontal pulling movement that strengthens the mid-back and improves posture.",
-                image: "https://images.unsplash.com/photo-1598575435247-2572be03bf6d?auto=format&fit=crop&w=800&q=80",
-                imageAlt: "A man performing a seated row exercise in a gym"
-            }
-        ];
-
-        // "Back" deliberately has no button below — it only surfaces when
-        // "All" is selected, which proves the filter is doing real work
-        // rather than every exercise matching every button.
-        this.exerciseCategories = ["All", "Chest", "Shoulders", "Legs"];
+        this.exerciseCategories = ["All", "Chest", "Shoulders", "Legs", "Back"];
+        this.exerciseDifficulties = ["Any Level", "Beginner", "Intermediate", "Advanced"];
     }
 }
 
 const contentData = new HarvardFitnessContent();
+const fallbackImg = "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=640&q=80";
 
 // ==========================================
-// 2. CHILD COMPONENTS (Arrow Functions)
+// 2. CHILD COMPONENTS 
 // ==========================================
 
 const Navbar = ({ currentPage, setCurrentPage }) => {
-    const navItems = ['home', 'blog', 'facts', 'diets', 'exercise', 'signup'];
+    const navItems = ['home', 'exercise', 'diets', 'facts', 'blog', 'signup'];
     return (
         <nav style={{ backgroundColor: '#111827', padding: '16px 40px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '3px solid #dc2626', position: 'sticky', top: 0, zIndex: 900 }}>
             <span style={{ fontSize: '22px', fontWeight: '800', color: '#ffffff', letterSpacing: '1px' }}>
@@ -221,16 +148,13 @@ const Navbar = ({ currentPage, setCurrentPage }) => {
     );
 };
 
-// Hero: leads with a real image instead of a flat gradient so the page has
-// something characteristic to look at in the first second (design principle:
-// the hero is a thesis, not just a headline).
 const BannerHeader = ({ setCurrentPage }) => (
     <header
         style={{
             textAlign: 'center',
             padding: '90px 20px 70px',
             backgroundColor: '#111827',
-            backgroundImage: 'linear-gradient(180deg, rgba(15,23,42,0.55) 0%, rgba(15,23,42,0.88) 65%, #0f172a 100%), url(https://picsum.photos/seed/gymhero/1600/700)',
+            backgroundImage: 'linear-gradient(180deg, rgba(15,23,42,0.65) 0%, rgba(15,23,42,0.92) 65%, #0f172a 100%), url(https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1600&q=80)',
             backgroundSize: 'cover',
             backgroundPosition: 'center 30%',
             borderBottom: '1px solid #374151',
@@ -251,8 +175,6 @@ const BannerHeader = ({ setCurrentPage }) => (
     </header>
 );
 
-// Credibility strip directly under the hero — answers "is this legit"
-// before the visitor has to scroll for it.
 const StatsBar = () => (
     <div style={{ backgroundColor: '#111827', borderBottom: '1px solid #374151', padding: '22px 20px' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', textAlign: 'center' }}>
@@ -276,8 +198,6 @@ const HomePageView = ({ setCurrentPage }) => {
             <StatsBar />
 
             <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '56px 20px' }}>
-
-                {/* ==================== WHAT WE OFFER: trainers / diet plans / supplements ==================== */}
                 <div style={{ marginBottom: '64px' }}>
                     <div style={{ textAlign: 'center', marginBottom: '32px' }}>
                         <span style={{ color: '#dc2626', fontSize: '12px', fontWeight: 'bold', letterSpacing: '2px', textTransform: 'uppercase' }}>What You Get</span>
@@ -306,10 +226,11 @@ const HomePageView = ({ setCurrentPage }) => {
                                     <img
                                         src={service.image}
                                         alt={service.title}
+                                        onError={(e) => { e.target.src = fallbackImg; }}
                                         style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.4s ease', transform: serviceHover === index ? 'scale(1.08)' : 'scale(1)' }}
                                     />
                                     <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(17,24,39,0) 40%, rgba(17,24,39,0.9) 100%)' }} />
-                                    <span style={{ position: 'absolute', bottom: '10px', left: '16px', fontSize: '26px' }}>{service.icon}</span>
+                                    <span style={{ position: 'absolute', bottom: '10px', left: '16px', fontSize: '12px', fontWeight: 'bold', color: '#fff', backgroundColor: 'rgba(0,0,0,0.5)', padding: '2px 8px', borderRadius: '4px' }}>[{service.code}]</span>
                                     {service.badge && (
                                         <span style={{ position: 'absolute', top: '12px', right: '12px', backgroundColor: '#dc2626', color: '#fff', fontSize: '10px', fontWeight: 'bold', padding: '4px 10px', borderRadius: '50px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{service.badge}</span>
                                     )}
@@ -355,30 +276,35 @@ const HomePageView = ({ setCurrentPage }) => {
                         Fundamental <span style={{ color: '#dc2626' }}>Movement Poses</span>
                     </h2>
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '24px' }}>
-                        {['squat', 'deadlift', 'pushup'].map((pose) => (
+                        {[
+                            { id: 'squat', title: 'The Barbell Squat', image: 'https://images.unsplash.com/photo-1567598508481-65985588e295?auto=format&fit=crop&w=640&q=80' },
+                            { id: 'deadlift', title: 'The Barbell Deadlift', image: 'https://images.unsplash.com/photo-1566241142559-40e1dab266c6?auto=format&fit=crop&w=640&q=80' },
+                            { id: 'pushup', title: 'Push-Up Progression', image: 'https://images.unsplash.com/photo-1598971639058-fab3c3109a00?auto=format&fit=crop&w=640&q=80' }
+                        ].map((pose) => (
                             <div
-                                key={pose}
-                                onMouseEnter={() => setPoseHover(pose)}
+                                key={pose.id}
+                                onMouseEnter={() => setPoseHover(pose.id)}
                                 onMouseLeave={() => setPoseHover(null)}
                                 style={{
                                     backgroundColor: '#1f2937',
                                     borderRadius: '8px',
                                     overflow: 'hidden',
-                                    border: poseHover === pose ? '1px solid #dc2626' : '1px solid #374151',
+                                    border: poseHover === pose.id ? '1px solid #dc2626' : '1px solid #374151',
                                     transition: 'all 0.3s ease',
-                                    transform: poseHover === pose ? 'scale(1.03)' : 'scale(1)',
-                                    boxShadow: poseHover === pose ? '0 12px 24px rgba(0,0,0,0.4)' : 'none'
+                                    transform: poseHover === pose.id ? 'scale(1.03)' : 'scale(1)',
+                                    boxShadow: poseHover === pose.id ? '0 12px 24px rgba(0,0,0,0.4)' : 'none'
                                 }}
                             >
                                 <div style={{ overflow: 'hidden', height: '220px' }}>
                                     <img
-                                        src={`https://picsum.photos/seed/${pose}/640/440`}
-                                        alt={pose}
-                                        style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.4s ease', transform: poseHover === pose ? 'scale(1.1)' : 'scale(1)' }}
+                                        src={pose.image}
+                                        alt={pose.title}
+                                        onError={(e) => { e.target.src = fallbackImg; }}
+                                        style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.4s ease', transform: poseHover === pose.id ? 'scale(1.1)' : 'scale(1)' }}
                                     />
                                 </div>
                                 <div style={{ padding: '20px' }}>
-                                    <h3 style={{ color: poseHover === pose ? '#dc2626' : '#ffffff', margin: '0 0 8px 0', textTransform: 'capitalize', transition: 'color 0.2s' }}>{pose === 'pushup' ? 'Push-Up Progression' : `The Barbell ${pose}`}</h3>
+                                    <h3 style={{ color: poseHover === pose.id ? '#dc2626' : '#ffffff', margin: '0 0 8px 0', textTransform: 'capitalize', transition: 'color 0.2s' }}>{pose.title}</h3>
                                     <p style={{ color: '#9ca3af', fontSize: '14px', margin: '0', lineHeight: '1.5' }}>High-yield physical compound execution mapped out from clinical exercise trials.</p>
                                 </div>
                             </div>
@@ -390,11 +316,11 @@ const HomePageView = ({ setCurrentPage }) => {
                     <h2 style={{ color: '#ffffff', fontSize: '26px', marginBottom: '24px' }}>Telemetry <span style={{ color: '#dc2626' }}>Reviews</span></h2>
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
                         {[
-                            { name: 'Engineer Bilal K.', avatar: 'reviewbilal', quote: 'The structured food data tracker helped me hit my exact macro thresholds cleanly. The implementation is seamless.' },
-                            { name: 'Dr. Sarah T.', avatar: 'reviewsarah', quote: 'Excellent focus on evidence-based training methods derived directly from Harvard clinical guidelines.' }
+                            { name: 'Engineer Bilal K.', avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=200&q=80', quote: 'The structured food data tracker helped me hit my exact macro thresholds cleanly. The implementation is seamless.' },
+                            { name: 'Dr. Sarah T.', avatar: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=200&q=80', quote: 'Excellent focus on evidence-based training methods derived directly from Harvard clinical guidelines.' }
                         ].map((review, i) => (
                             <div key={i} style={{ backgroundColor: '#111827', padding: '24px', borderRadius: '8px', border: '1px solid #374151', display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
-                                <img src={`https://picsum.photos/seed/${review.avatar}/80/80`} alt={review.name} style={{ width: '44px', height: '44px', borderRadius: '50%', objectFit: 'cover', flexShrink: 0, border: '2px solid #dc2626' }} />
+                                <img src={review.avatar} alt={review.name} onError={(e) => { e.target.src = fallbackImg; }} style={{ width: '44px', height: '44px', borderRadius: '50%', objectFit: 'cover', flexShrink: 0, border: '2px solid #dc2626' }} />
                                 <div>
                                     <p style={{ color: '#d1d5db', margin: '0 0 10px 0' }}>"{review.quote}"</p>
                                     <strong style={{ color: '#dc2626', fontSize: '14px' }}>— {review.name}</strong>
@@ -432,17 +358,12 @@ const BlogPageView = () => (
     </div>
 );
 
-// FactsPageView: previously three columns of plain unbroken text with a
-// "[01]" index. Reworked so each fact leads with an icon + a pulled-out
-// headline stat, which gives the eye something to scan before reading the
-// sentence, plus light stagger-in motion so the page doesn't feel static.
 const FactsPageView = () => {
     const categories = [
-        { key: 'habits', title: 'Systemic Habits', icon: '🛌', color: '#3b82f6' },
-        { key: 'diets', title: 'Nutritional Diets', icon: '🍽️', color: '#10b981' },
-        { key: 'exercise', title: 'Physical Exercise', icon: '🏋️', color: '#dc2626' }
+        { key: 'habits', title: 'Systemic Habits', code: 'HBT', color: '#3b82f6' },
+        { key: 'diets', title: 'Nutritional Diets', code: 'DTE', color: '#10b981' },
+        { key: 'exercise', title: 'Physical Exercise', code: 'EXE', color: '#dc2626' }
     ];
-
     return (
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '40px 20px', animation: 'fadeInUp 0.5s ease-out' }}>
             <h2 style={{ color: '#ffffff', fontSize: '32px', marginBottom: '8px' }}>
@@ -453,7 +374,7 @@ const FactsPageView = () => {
                 {categories.map((cat, colIndex) => (
                     <div key={cat.key} style={{ backgroundColor: '#1f2937', borderRadius: '12px', border: '1px solid #374151', overflow: 'hidden', animation: `fadeInUp 0.5s ease-out ${colIndex * 0.1}s backwards` }}>
                         <div style={{ backgroundColor: '#111827', padding: '16px 20px', borderBottom: `3px solid ${cat.color}`, display: 'flex', alignItems: 'center', gap: '10px' }}>
-                            <span style={{ fontSize: '20px' }}>{cat.icon}</span>
+                            <span style={{ fontSize: '14px', fontWeight: 'bold', color: cat.color }}>[{cat.code}]</span>
                             <h3 style={{ color: '#ffffff', margin: '0', fontSize: '16px', textTransform: 'uppercase', letterSpacing: '1px' }}>{cat.title}</h3>
                         </div>
                         <div style={{ padding: '8px 16px 16px' }}>
@@ -469,7 +390,7 @@ const FactsPageView = () => {
                                         transition: 'background-color 0.2s ease'
                                     }}
                                 >
-                                    <span style={{ fontSize: '20px', lineHeight: '1', flexShrink: 0, marginTop: '2px' }}>{fact.icon}</span>
+                                    <span style={{ fontSize: '11px', color: '#64748b', fontWeight: 'bold', lineHeight: '1', flexShrink: 0, marginTop: '4px' }}>{fact.code}</span>
                                     <div>
                                         <span style={{ display: 'inline-block', color: cat.color, fontWeight: '800', fontSize: '13px', fontFamily: 'monospace', backgroundColor: '#111827', padding: '2px 8px', borderRadius: '4px', marginBottom: '6px' }}>{fact.stat}</span>
                                         <p style={{ color: '#cbd5e1', margin: '0', fontSize: '13.5px', lineHeight: '1.5' }}>{fact.text}</p>
@@ -490,12 +411,10 @@ const DietsPageView = () => {
     const [bmi, setBmi] = useState(null);
     const [classification, setClassification] = useState('');
 
-    // Calorie & Recommended Foods State Array
     const [fitnessGoal, setFitnessGoal] = useState('maintenance');
     const [suggestedCalories, setSuggestedCalories] = useState(2150);
     const [macroBreakdown, setMacroBreakdown] = useState("Isocaloric Balance: 40% Carbs, 30% Protein, 30% Fats");
     const [foodsList, setFoodsList] = useState("Grilled Chicken, Quinoa, Salmon, Avocados, Walnuts, Spinach");
-
     const dietDatabase = {
         underweight: {
             title: "Caloric Surplus Intake Strategy",
@@ -525,7 +444,6 @@ const DietsPageView = () => {
             ]
         }
     };
-
     const calculateBmi = (e) => {
         e.preventDefault();
         const w = parseFloat(weight);
@@ -555,10 +473,9 @@ const DietsPageView = () => {
             setFoodsList("Grilled Chicken, Quinoa, Salmon, Avocados, Walnuts, Spinach");
         }
     };
-
     return (
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '40px 20px', animation: 'fadeInUp 0.5s ease-out' }}>
-            <h2 style={{ color: '#ffffff', fontSize: '32px', marginBottom: '8px' }}>Biometric <span style={{ color: '#dc2626' }}>Calorie Monitor</span></h2>
+            <h2>Biometric <span style={{ color: '#dc2626' }}>Calorie Monitor</span></h2>
             <p style={{ color: '#9ca3af', marginBottom: '32px' }}>Two steps: find your BMI, then dial in a daily calorie target and matching foods.</p>
 
             <span style={{ color: '#dc2626', fontSize: '12px', fontWeight: 'bold', letterSpacing: '2px', textTransform: 'uppercase', display: 'block', marginBottom: '16px' }}>Step 1 — Know Your BMI</span>
@@ -628,7 +545,6 @@ const DietsPageView = () => {
                 </div>
             )}
 
-            {/* Calorie Intake Matrix Module Block */}
             <span style={{ color: '#dc2626', fontSize: '12px', fontWeight: 'bold', letterSpacing: '2px', textTransform: 'uppercase', display: 'block', marginBottom: '16px' }}>Step 2 — Set Your Calorie Target</span>
             <div style={{ backgroundColor: '#1f2937', padding: '32px', borderRadius: '12px', border: '1px solid #374151' }}>
                 <h3 style={{ color: '#ffffff', marginTop: '0', fontSize: '22px', borderBottom: '2px solid #374151', paddingBottom: '8px' }}>
@@ -637,9 +553,9 @@ const DietsPageView = () => {
                 <p style={{ color: '#9ca3af', fontSize: '14px', marginBottom: '24px' }}>Select your priority biometric target vector below to calculate your daily ceiling threshold and match recommended foods.</p>
 
                 <div style={{ display: 'flex', gap: '12px', marginBottom: '24px' }}>
-                    <button type="button" onClick={() => adjustCalorieGoal('loss')} style={{ flex: '1', backgroundColor: fitnessGoal === 'loss' ? '#dc2626' : '#111827', border: 'none', borderRadius: '6px', padding: '12px', color: '#ffffff', fontWeight: 'bold', fontSize: '12px', textTransform: 'uppercase', cursor: 'pointer', transition: 'background-color 0.2s ease' }}>⚡ Fat Loss</button>
-                    <button type="button" onClick={() => adjustCalorieGoal('maintenance')} style={{ flex: '1', backgroundColor: fitnessGoal === 'maintenance' ? '#dc2626' : '#111827', border: 'none', borderRadius: '6px', padding: '12px', color: '#ffffff', fontWeight: 'bold', fontSize: '12px', textTransform: 'uppercase', cursor: 'pointer', transition: 'background-color 0.2s ease' }}>⚖️ Maintenance</button>
-                    <button type="button" onClick={() => adjustCalorieGoal('gain')} style={{ flex: '1', backgroundColor: fitnessGoal === 'gain' ? '#dc2626' : '#111827', border: 'none', borderRadius: '6px', padding: '12px', color: '#ffffff', fontWeight: 'bold', fontSize: '12px', textTransform: 'uppercase', cursor: 'pointer', transition: 'background-color 0.2s ease' }}>💪 Muscle Gain</button>
+                    <button type="button" onClick={() => adjustCalorieGoal('loss')} style={{ flex: '1', backgroundColor: fitnessGoal === 'loss' ? '#dc2626' : '#111827', border: 'none', borderRadius: '6px', padding: '12px', color: '#ffffff', fontWeight: 'bold', fontSize: '12px', textTransform: 'uppercase', cursor: 'pointer', transition: 'background-color 0.2s ease' }}>[ - ] Fat Loss</button>
+                    <button type="button" onClick={() => adjustCalorieGoal('maintenance')} style={{ flex: '1', backgroundColor: fitnessGoal === 'maintenance' ? '#dc2626' : '#111827', border: 'none', borderRadius: '6px', padding: '12px', color: '#ffffff', fontWeight: 'bold', fontSize: '12px', textTransform: 'uppercase', cursor: 'pointer', transition: 'background-color 0.2s ease' }}>[ = ] Maintenance</button>
+                    <button type="button" onClick={() => adjustCalorieGoal('gain')} style={{ flex: '1', backgroundColor: fitnessGoal === 'gain' ? '#dc2626' : '#111827', border: 'none', borderRadius: '6px', padding: '12px', color: '#ffffff', fontWeight: 'bold', fontSize: '12px', textTransform: 'uppercase', cursor: 'pointer', transition: 'background-color 0.2s ease' }}>[ + ] Muscle Gain</button>
                 </div>
 
                 <div style={{ backgroundColor: '#111827', padding: '24px', borderRadius: '8px', borderLeft: '4px solid #dc2626' }}>
@@ -661,154 +577,178 @@ const DietsPageView = () => {
     );
 };
 
-// ExerciseLibrarySection: a searchable, filterable exercise database in
-// the style of wger.de's exercise overview, restyled to match this
-// site's dark "clinical telemetry" theme. It owns its own filter state
-// (category, search term, hovered card) since none of that needs to be
-// known by the rest of the page.
-const ExerciseLibrarySection = () => {
-    const [activeCategory, setActiveCategory] = useState('All');
-    const [searchTerm, setSearchTerm] = useState('');
-    const [hoveredExerciseId, setHoveredExerciseId] = useState(null);
+const DifficultyBadge = ({ level }) => {
+    const colorMap = {
+        Beginner: { bg: 'rgba(16,185,129,0.12)', text: '#10b981', border: '#10b981' },
+        Intermediate: { bg: 'rgba(245,158,11,0.12)', text: '#f59e0b', border: '#f59e0b' },
+        Advanced: { bg: 'rgba(220,38,38,0.12)', text: '#dc2626', border: '#dc2626' }
+    };
+    const colors = colorMap[level] || colorMap.Beginner;
+    return (
+        <span style={{ display: 'inline-block', backgroundColor: colors.bg, color: colors.text, border: `1px solid ${colors.border}`, borderRadius: '4px', padding: '2px 8px', fontSize: '10px', fontWeight: 'bold', letterSpacing: '0.5px', textTransform: 'uppercase' }}>
+            {level}
+        </span>
+    );
+};
 
-    // Two independent conditions combined with AND: an exercise only
-    // shows up if it matches the selected category AND the search box.
-    const filteredExercises = contentData.exerciseLibrary.filter((exercise) => {
-        const matchesCategory = activeCategory === 'All' || exercise.category === activeCategory;
-        const matchesSearch = exercise.name.toLowerCase().includes(searchTerm.toLowerCase().trim());
-        return matchesCategory && matchesSearch;
+const categoryAccentColor = { Chest: '#3b82f6', Shoulders: '#a855f7', Legs: '#f59e0b', Back: '#10b981' };
+const ExerciseCard = ({ exercise, isHovered, onMouseEnter, onMouseLeave, animDelay }) => {
+    const accent = categoryAccentColor[exercise.category] || '#dc2626';
+    return (
+        <div
+            onMouseEnter={onMouseEnter}
+            onMouseLeave={onMouseLeave}
+            style={{ backgroundColor: '#1f2937', borderRadius: '10px', border: isHovered ? `1px solid ${accent}` : '1px solid #374151', overflow: 'hidden', transition: 'transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease', transform: isHovered ? 'translateY(-5px)' : 'translateY(0)', boxShadow: isHovered ? `0 16px 28px rgba(0,0,0,0.45)` : 'none', animation: `fadeInUp 0.4s ease-out ${animDelay}s backwards`, display: 'flex', flexDirection: 'column' }}
+        >
+            <div style={{ overflow: 'hidden', height: '180px', position: 'relative', flexShrink: 0 }}>
+                <img src={exercise.image_url || exercise.image} alt={exercise.image_alt || exercise.imageAlt} onError={(e) => { e.target.src = fallbackImg; }} style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.45s ease', transform: isHovered ? 'scale(1.07)' : 'scale(1)' }} />
+                <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(15,23,42,0.7) 0%, transparent 50%)' }} />
+                <span style={{ position: 'absolute', bottom: '10px', left: '12px', backgroundColor: accent, color: '#ffffff', borderRadius: '4px', padding: '3px 10px', fontSize: '10px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.6px' }}>{exercise.category}</span>
+            </div>
+
+            <div style={{ padding: '18px 20px 20px', display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '8px', marginBottom: '8px' }}>
+                    <h4 style={{ color: '#ffffff', margin: '0', fontSize: '15px', fontWeight: '700', lineHeight: '1.3', flexGrow: 1 }}>{exercise.name}</h4>
+                    <DifficultyBadge level={exercise.difficulty} />
+                </div>
+                <p style={{ color: '#9ca3af', fontSize: '13px', lineHeight: '1.55', margin: '0 0 16px 0', flexGrow: 1 }}>{exercise.description}</p>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px 12px', borderTop: '1px solid #374151', paddingTop: '14px', fontSize: '12px' }}>
+                    <div><span style={{ color: '#64748b', display: 'block', marginBottom: '2px', textTransform: 'uppercase', letterSpacing: '0.4px', fontSize: '10px' }}>Primary Muscle</span><span style={{ color: '#e2e8f0', fontWeight: '600' }}>{exercise.muscles}</span></div>
+                    <div><span style={{ color: '#64748b', display: 'block', marginBottom: '2px', textTransform: 'uppercase', letterSpacing: '0.4px', fontSize: '10px' }}>Working Sets</span><span style={{ color: '#e2e8f0', fontWeight: '600', fontFamily: 'monospace' }}>{exercise.sets}</span></div>
+                    <div style={{ gridColumn: '1 / -1' }}><span style={{ color: '#64748b', display: 'block', marginBottom: '2px', textTransform: 'uppercase', letterSpacing: '0.4px', fontSize: '10px' }}>Equipment</span><span style={{ color: '#cbd5e1' }}>{exercise.equipment}</span></div>
+                </div>
+                <div style={{ marginTop: '14px', height: '3px', borderRadius: '2px', backgroundColor: accent, opacity: isHovered ? 1 : 0.3, transition: 'opacity 0.25s ease' }} />
+            </div>
+        </div>
+    );
+};
+
+const ExerciseLibrarySection = () => {
+    const [dbExercises, setDbExercises] = useState([]);
+    useEffect(() => {
+        fetch("http://127.0.0.1:8000/api/exercises/")
+            .then((response) => response.json())
+            .then((data) => setDbExercises(data))
+            .catch((error) => console.error("Network error:", error));
+    }, []);
+
+    const [activeCategory, setActiveCategory] = useState('All');
+    const [activeDifficulty, setActiveDifficulty] = useState('Any Level');
+    const [searchTerm, setSearchTerm] = useState('');
+    const [hoveredId, setHoveredId] = useState(null);
+
+    const filteredExercises = dbExercises.filter((ex) => {
+        const categoryMatch = activeCategory === 'All' || ex.category === activeCategory;
+        const difficultyMatch = activeDifficulty === 'Any Level' || ex.difficulty === activeDifficulty;
+        const searchMatch = ex.name.toLowerCase().includes(searchTerm.toLowerCase().trim());
+        return categoryMatch && difficultyMatch && searchMatch;
     });
+
+    const countByCategory = (cat) => {
+        if (cat === 'All') return dbExercises.length;
+        return dbExercises.filter(ex => ex.category === cat).length;
+    };
 
     return (
         <div style={{ marginBottom: '56px' }}>
-            <h3 style={{ color: '#ffffff', fontSize: '22px', marginBottom: '8px', borderBottom: '1px solid #374151', paddingBottom: '10px' }}>
-                Exercise <span style={{ color: '#dc2626' }}>Library</span>
-            </h3>
-            <p style={{ color: '#9ca3af', fontSize: '14px', marginTop: '0', marginBottom: '24px' }}>
-                Cross-referenced movement database, filterable by target region and searchable by name.
-            </p>
+            <div style={{ borderRadius: '12px', overflow: 'hidden', marginBottom: '32px', position: 'relative', height: '220px', backgroundImage: 'linear-gradient(90deg, rgba(15,23,42,0.95) 0%, rgba(15,23,42,0.7) 60%, rgba(15,23,42,0.2) 100%), url(https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1400&q=80)', backgroundSize: 'cover', backgroundPosition: 'center 40%', display: 'flex', alignItems: 'center', padding: '0 40px' }}>
+                <div>
+                    <span style={{ color: '#dc2626', fontSize: '11px', fontWeight: 'bold', letterSpacing: '3px', textTransform: 'uppercase', display: 'block', marginBottom: '10px' }}>Movement Database</span>
+                    <h3 style={{ color: '#ffffff', fontSize: '34px', fontWeight: '900', margin: '0 0 10px 0', letterSpacing: '-0.5px' }}>Exercise <span style={{ color: '#dc2626' }}>Overview</span></h3>
+                    <p style={{ color: '#94a3b8', fontSize: '14px', margin: '0', maxWidth: '420px', lineHeight: '1.6' }}>A filterable reference of compound and isolation movements, each documented with primary movers, equipment, and recommended working sets.</p>
+                </div>
+                <div style={{ position: 'absolute', top: '24px', right: '32px', display: 'flex', gap: '12px' }}>
+                    {[
+                        { value: dbExercises.length, label: 'Exercises' },
+                        { value: contentData.exerciseCategories.length - 1, label: 'Muscle Groups' },
+                        { value: 3, label: 'Difficulty Tiers' }
+                    ].map((chip) => (
+                        <div key={chip.label} style={{ backgroundColor: 'rgba(15,23,42,0.8)', border: '1px solid #374151', borderRadius: '8px', padding: '10px 16px', textAlign: 'center', backdropFilter: 'blur(4px)' }}>
+                            <div style={{ color: '#dc2626', fontWeight: '900', fontSize: '22px', fontFamily: 'monospace', lineHeight: '1' }}>{chip.value}</div>
+                            <div style={{ color: '#64748b', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.5px', marginTop: '4px' }}>{chip.label}</div>
+                        </div>
+                    ))}
+                </div>
+            </div>
 
-            <div className="exercise-library-layout" style={{ display: 'flex', gap: '28px' }}>
-                {/* Filter sidebar: search box on top, category buttons below. */}
-                <aside className="exercise-library-sidebar" style={{ width: '220px', flexShrink: 0 }}>
-                    <label htmlFor="exercise-search" style={{ display: 'block', color: '#9ca3af', fontSize: '11px', fontWeight: 'bold', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '8px' }}>
-                        Search
-                    </label>
-                    <input
-                        id="exercise-search"
-                        type="text"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        placeholder="Search exercises"
-                        style={{ width: '100%', padding: '10px 12px', fontSize: '14px', borderRadius: '6px', border: '1px solid #374151', backgroundColor: '#111827', color: '#ffffff', boxSizing: 'border-box', marginBottom: '24px' }}
-                    />
-
-                    <span style={{ display: 'block', color: '#9ca3af', fontSize: '11px', fontWeight: 'bold', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '8px' }}>
-                        Categories
-                    </span>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                        {contentData.exerciseCategories.map((category) => {
-                            const isActive = category === activeCategory;
-                            return (
-                                <button
-                                    key={category}
-                                    type="button"
-                                    onClick={() => setActiveCategory(category)}
-                                    style={{
-                                        textAlign: 'left',
-                                        padding: '10px 12px',
-                                        borderRadius: '6px',
-                                        border: 'none',
-                                        backgroundColor: isActive ? '#dc2626' : 'transparent',
-                                        color: isActive ? '#ffffff' : '#9ca3af',
-                                        fontSize: '13px',
-                                        fontWeight: isActive ? 'bold' : '600',
-                                        textTransform: 'uppercase',
-                                        letterSpacing: '0.5px',
-                                        cursor: 'pointer',
-                                        transition: 'background-color 0.2s ease, color 0.2s ease'
-                                    }}
-                                >
-                                    {category}
-                                </button>
-                            );
-                        })}
+            <div className="exercise-library-layout" style={{ display: 'flex', gap: '28px', alignItems: 'flex-start' }}>
+                <aside className="exercise-library-sidebar" style={{ width: '230px', flexShrink: 0, position: 'sticky', top: '80px' }}>
+                    <div style={{ marginBottom: '24px' }}>
+                        <label htmlFor="exercise-search" style={{ display: 'block', color: '#64748b', fontSize: '10px', fontWeight: 'bold', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '8px' }}>Search</label>
+                        <div style={{ position: 'relative' }}>
+                            <span style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: '#64748b', fontSize: '11px', fontWeight: 'bold' }}>SEARCH</span>
+                            <input id="exercise-search" type="text" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder="..." style={{ width: '100%', padding: '10px 12px 10px 60px', fontSize: '13px', borderRadius: '6px', border: '1px solid #374151', backgroundColor: '#111827', color: '#ffffff', boxSizing: 'border-box', outline: 'none', transition: 'border-color 0.2s ease' }} />
+                        </div>
                     </div>
+
+                    <div style={{ marginBottom: '24px' }}>
+                        <span style={{ display: 'block', color: '#64748b', fontSize: '10px', fontWeight: 'bold', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '10px' }}>Muscle Group</span>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                            {contentData.exerciseCategories.map((cat) => {
+                                const isActive = cat === activeCategory;
+                                const accent = cat === 'All' ? '#dc2626' : categoryAccentColor[cat] || '#dc2626';
+                                return (
+                                    <button key={cat} type="button" onClick={() => setActiveCategory(cat)} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', textAlign: 'left', padding: '9px 12px', borderRadius: '6px', border: isActive ? `1px solid ${accent}` : '1px solid transparent', backgroundColor: isActive ? `rgba(${accent === '#dc2626' ? '220,38,38' : accent === '#3b82f6' ? '59,130,246' : accent === '#a855f7' ? '168,85,247' : accent === '#f59e0b' ? '245,158,11' : '16,185,129'},0.12)` : 'transparent', color: isActive ? '#ffffff' : '#9ca3af', fontSize: '13px', fontWeight: isActive ? '700' : '500', cursor: 'pointer', transition: 'all 0.2s ease' }}>
+                                        <span>{cat}</span><span style={{ backgroundColor: '#111827', color: '#64748b', borderRadius: '50px', padding: '1px 7px', fontSize: '10px', fontFamily: 'monospace', fontWeight: 'bold' }}>{countByCategory(cat)}</span>
+                                    </button>
+                                );
+                            })}
+                        </div>
+                    </div>
+
+                    <div style={{ marginBottom: '24px' }}>
+                        <span style={{ display: 'block', color: '#64748b', fontSize: '10px', fontWeight: 'bold', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '10px' }}>Difficulty</span>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                            {contentData.exerciseDifficulties.map((level) => {
+                                const isActive = level === activeDifficulty;
+                                return (
+                                    <button key={level} type="button" onClick={() => setActiveDifficulty(level)} style={{ textAlign: 'left', padding: '9px 12px', borderRadius: '6px', border: isActive ? '1px solid #dc2626' : '1px solid transparent', backgroundColor: isActive ? 'rgba(220,38,38,0.1)' : 'transparent', color: isActive ? '#ffffff' : '#9ca3af', fontSize: '13px', fontWeight: isActive ? '700' : '500', cursor: 'pointer', transition: 'all 0.2s ease' }}>{level}</button>
+                                );
+                            })}
+                        </div>
+                    </div>
+
+                    {(activeCategory !== 'All' || activeDifficulty !== 'Any Level' || searchTerm !== '') && (
+                        <button type="button" onClick={() => { setActiveCategory('All'); setActiveDifficulty('Any Level'); setSearchTerm(''); }} style={{ backgroundColor: 'transparent', border: '1px solid #374151', color: '#9ca3af', borderRadius: '6px', padding: '8px 12px', fontSize: '12px', cursor: 'pointer', width: '100%', textAlign: 'center', transition: 'border-color 0.2s ease, color 0.2s ease' }}>Clear Filters</button>
+                    )}
                 </aside>
 
-                {/* Result grid: one card per matching exercise. */}
-                <div style={{ flexGrow: 1 }}>
-                    <p style={{ color: '#64748b', fontSize: '13px', marginTop: '0', marginBottom: '16px' }}>
-                        {filteredExercises.length} exercise{filteredExercises.length === 1 ? '' : 's'} found
-                    </p>
+                <div style={{ flexGrow: 1, minWidth: 0 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                        <p style={{ color: '#64748b', fontSize: '13px', margin: '0' }}>Showing <strong style={{ color: '#e2e8f0' }}>{filteredExercises.length}</strong> of <strong style={{ color: '#e2e8f0' }}>{dbExercises.length}</strong> exercises {activeCategory !== 'All' && <span> in <strong style={{ color: '#dc2626' }}>{activeCategory}</strong></span>} {activeDifficulty !== 'Any Level' && <span> — <strong style={{ color: '#dc2626' }}>{activeDifficulty}</strong></span>}</p>
+                    </div>
 
                     {filteredExercises.length === 0 ? (
-                        <p style={{ color: '#9ca3af', fontSize: '14px' }}>
-                            No exercises match your filters. Try a different category or search term.
-                        </p>
+                        <div style={{ textAlign: 'center', padding: '60px 20px', backgroundColor: '#1f2937', borderRadius: '10px', border: '1px dashed #374151' }}>
+                            <div style={{ fontSize: '14px', marginBottom: '12px', color: '#dc2626', fontWeight: 'bold' }}>[ NULL_RESULT ]</div>
+                            <p style={{ color: '#9ca3af', margin: '0 0 8px 0', fontWeight: '600' }}>No exercises match your filters.</p>
+                            <p style={{ color: '#64748b', fontSize: '13px', margin: '0' }}>Try adjusting the muscle group, difficulty, or search term.</p>
+                        </div>
                     ) : (
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-                            {filteredExercises.map((exercise, idx) => {
-                                const isHovered = hoveredExerciseId === exercise.id;
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '20px' }}>
+                            {filteredExercises.map((exercise, idx) => (
+                                <ExerciseCard key={exercise.id || idx} exercise={exercise} isHovered={hoveredId === exercise.id} onMouseEnter={() => setHoveredId(exercise.id)} onMouseLeave={() => setHoveredId(null)} animDelay={idx * 0.05} />
+                            ))}
+                        </div>
+                    )}
+
+                    <div style={{ marginTop: '36px', backgroundColor: '#111827', borderRadius: '10px', padding: '24px', border: '1px solid #1e293b' }}>
+                        <span style={{ display: 'block', color: '#64748b', fontSize: '10px', fontWeight: 'bold', letterSpacing: '1.5px', textTransform: 'uppercase', marginBottom: '16px' }}>Coverage by Muscle Group</span>
+                        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                            {['Chest', 'Shoulders', 'Legs', 'Back'].map((group) => {
+                                const count = dbExercises.filter(ex => ex.category === group).length;
+                                const total = dbExercises.length;
+                                const pct = total > 0 ? Math.round((count / total) * 100) : 0;
+                                const accent = categoryAccentColor[group];
                                 return (
-                                    <div
-                                        key={exercise.id}
-                                        onMouseEnter={() => setHoveredExerciseId(exercise.id)}
-                                        onMouseLeave={() => setHoveredExerciseId(null)}
-                                        style={{
-                                            backgroundColor: '#1f2937',
-                                            borderRadius: '8px',
-                                            border: isHovered ? '1px solid #dc2626' : '1px solid #374151',
-                                            overflow: 'hidden',
-                                            transition: 'all 0.25s ease',
-                                            transform: isHovered ? 'translateY(-4px)' : 'translateY(0)',
-                                            boxShadow: isHovered ? '0 12px 22px rgba(0,0,0,0.35)' : 'none',
-                                            animation: `fadeInUp 0.4s ease-out ${idx * 0.06}s backwards`
-                                        }}
-                                    >
-                                        <div style={{ overflow: 'hidden', height: '150px' }}>
-                                            <img
-                                                src={exercise.image}
-                                                alt={exercise.imageAlt}
-                                                style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.4s ease', transform: isHovered ? 'scale(1.06)' : 'scale(1)' }}
-                                            />
-                                        </div>
-                                        <div style={{ padding: '18px' }}>
-                                            <span
-                                                style={{
-                                                    display: 'inline-block',
-                                                    color: '#dc2626',
-                                                    backgroundColor: '#111827',
-                                                    border: '1px solid #dc2626',
-                                                    borderRadius: '50px',
-                                                    padding: '3px 10px',
-                                                    fontSize: '10px',
-                                                    fontWeight: 'bold',
-                                                    textTransform: 'uppercase',
-                                                    letterSpacing: '0.5px',
-                                                    marginBottom: '10px'
-                                                }}
-                                            >
-                                                {exercise.category}
-                                            </span>
-                                            <h4 style={{ color: '#ffffff', margin: '0 0 6px 0', fontSize: '16px' }}>{exercise.name}</h4>
-                                            <p style={{ color: '#9ca3af', fontSize: '13px', margin: '0 0 14px 0', lineHeight: '1.5' }}>{exercise.description}</p>
-                                            <div style={{ fontSize: '12px', color: '#64748b', borderTop: '1px solid #374151', paddingTop: '10px' }}>
-                                                <div style={{ marginBottom: '4px' }}>
-                                                    <strong style={{ color: '#cbd5e1' }}>Equipment: </strong>
-                                                    {exercise.equipment}
-                                                </div>
-                                                <div>
-                                                    <strong style={{ color: '#cbd5e1' }}>Difficulty: </strong>
-                                                    {exercise.difficulty}
-                                                </div>
-                                            </div>
-                                        </div>
+                                    <div key={group} style={{ flexGrow: 1, minWidth: '100px' }}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}><span style={{ color: '#94a3b8', fontSize: '12px', fontWeight: '600' }}>{group}</span><span style={{ color: accent, fontSize: '12px', fontFamily: 'monospace', fontWeight: 'bold' }}>{count} / {total}</span></div>
+                                        <div style={{ height: '4px', backgroundColor: '#1e293b', borderRadius: '2px', overflow: 'hidden' }}><div style={{ height: '100%', width: `${pct}%`, backgroundColor: accent, borderRadius: '2px', transition: 'width 0.6s ease' }} /></div>
                                     </div>
                                 );
                             })}
                         </div>
-                    )}
+                    </div>
                 </div>
             </div>
         </div>
@@ -818,23 +758,21 @@ const ExerciseLibrarySection = () => {
 const ExercisePageView = () => {
     const [trainerHover, setTrainerHover] = useState(null);
     const [videoHover, setVideoHover] = useState(null);
-
     const trainers = [
-        { id: "t1", avatar: "trainer1", name: "Coach Elena Rostova", specialty: "Aesthetics & High-Fashion Modeling", bio: "Specializes in precise body composition alterations, posture mechanics, and low-inflammation stage preparation.", tag: "Elite Model Focus", color: '#3b82f6' },
-        { id: "t2", avatar: "trainer2", name: "Marcus Harrison", specialty: "General Population Health & Longevity", bio: "Bridges the gap for busy corporate professionals looking to reclaim kinetic mobility, lower blood pressure, and build sustainable habits.", tag: "Average Population", color: '#10b981' },
-        { id: "t3", avatar: "trainer3", name: "Commander Viktor Vance", specialty: "Powerlifting & Absolute Force Production", bio: "Heavy compound mechanics specialist. Maximizes CNS recruitment pathways, structural density, and raw barbell output limitations.", tag: "Weight Lifter", color: '#dc2626' },
-        { id: "t4", avatar: "trainer4", name: "Sarah Jenkins, CNS", specialty: "Metabolic Restoration & Therapeutic Adaptations", bio: "Clinical path specialist focusing on extreme weight reductions, heavy joint protection, insulin management, and zero-injury progressions.", tag: "Obese / Deconditioned", color: '#a855f7' }
+        { id: "t1", avatar: "https://images.unsplash.com/photo-1548690312-e3b507d8c110?auto=format&fit=crop&w=200&q=80", name: "Coach Elena Rostova", specialty: "Aesthetics & High-Fashion Modeling", bio: "Specializes in precise body composition alterations, posture mechanics, and low-inflammation stage preparation.", tag: "Elite Model Focus", color: '#3b82f6' },
+        { id: "t2", avatar: "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?auto=format&fit=crop&w=200&q=80", name: "Marcus Harrison", specialty: "General Population Health & Longevity", bio: "Bridges the gap for busy corporate professionals looking to reclaim kinetic mobility, lower blood pressure, and build sustainable habits.", tag: "Average Population", color: '#10b981' },
+        { id: "t3", avatar: "https://images.unsplash.com/photo-1583468982228-19f19164aee2?auto=format&fit=crop&w=200&q=80", name: "Commander Viktor Vance", specialty: "Powerlifting & Absolute Force Production", bio: "Heavy compound mechanics specialist. Maximizes CNS recruitment pathways, structural density, and raw barbell output limitations.", tag: "Weight Lifter", color: '#dc2626' },
+        { id: "t4", avatar: "https://images.unsplash.com/photo-1594381898411-846e7d193883?auto=format&fit=crop&w=200&q=80", name: "Sarah Jenkins, CNS", specialty: "Metabolic Restoration & Therapeutic Adaptations", bio: "Clinical path specialist focusing on extreme weight reductions, heavy joint protection, insulin management, and zero-injury progressions.", tag: "Obese / Deconditioned", color: '#a855f7' }
     ];
 
     const videoWorkouts = [
-        { thumb: "video1", title: "Joint Mobility Baseline", description: "Unlocking synovial fluid and rotational mechanics in major tracking systems.", duration: "10 Mins", url: "https://www.youtube.com/results?search_query=basic+mobility+exercises" },
-        { thumb: "video2", title: "Decompression Stretching", description: "Passive muscle tissue lengthening to lower neurological structural tension.", duration: "12 Mins", url: "https://www.youtube.com/results?search_query=easy+stretches+workout" },
-        { thumb: "video3", title: "High-Yield Micro Circuits", description: "Maximum metabolic stimulation optimized for hyper-restricted schedules.", duration: "5 Mins", url: "https://www.youtube.com/results?search_query=5+minute+workout" },
-        { thumb: "video4", title: "Kinetic Barbell Physics", description: "Deconstructing bracing, leverage angles, and safe force application rules.", duration: "15 Mins", url: "https://www.youtube.com/results?search_query=how+to+lift+weights+properly" },
-        { thumb: "video5", title: "Low-Impact Cardiac Engine", description: "Steady-state aerobic conditioning designed to spare deconditioned lower joints.", duration: "20 Mins", url: "https://www.youtube.com/results?search_query=low+impact+cardio+workout" },
-        { thumb: "video6", title: "Postural Spine Alignment", description: "Targeted activation patterns to reverse anterior desk-slouching degradation.", duration: "8 Mins", url: "https://www.youtube.com/results?search_query=posture+correction+exercises" }
+        { thumb: "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=480&q=80", title: "Joint Mobility Baseline", description: "Unlocking synovial fluid and rotational mechanics in major tracking systems.", duration: "10 Mins", url: "https://www.youtube.com/results?search_query=basic+mobility+exercises" },
+        { thumb: "https://images.unsplash.com/photo-1552674605-171ff3ea36f0?auto=format&fit=crop&w=480&q=80", title: "Decompression Stretching", description: "Passive muscle tissue lengthening to lower neurological structural tension.", duration: "12 Mins", url: "https://www.youtube.com/results?search_query=easy+stretches+workout" },
+        { thumb: "https://images.unsplash.com/photo-1534258936925-c58bed479fcb?auto=format&fit=crop&w=480&q=80", title: "High-Yield Micro Circuits", description: "Maximum metabolic stimulation optimized for hyper-restricted schedules.", duration: "5 Mins", url: "https://www.youtube.com/results?search_query=5+minute+workout" },
+        { thumb: "https://images.unsplash.com/photo-1584466977710-1ce99a3ff840?auto=format&fit=crop&w=480&q=80", title: "Kinetic Barbell Physics", description: "Deconstructing bracing, leverage angles, and safe force application rules.", duration: "15 Mins", url: "https://www.youtube.com/results?search_query=how+to+lift+weights+properly" },
+        { thumb: "https://images.unsplash.com/photo-1538805060514-97d9cc17730c?auto=format&fit=crop&w=480&q=80", title: "Low-Impact Cardiac Engine", description: "Steady-state aerobic conditioning designed to spare deconditioned lower joints.", duration: "20 Mins", url: "https://www.youtube.com/results?search_query=low+impact+cardio+workout" },
+        { thumb: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=480&q=80", title: "Postural Spine Alignment", description: "Targeted activation patterns to reverse anterior desk-slouching degradation.", duration: "8 Mins", url: "https://www.youtube.com/results?search_query=posture+correction+exercises" }
     ];
-
     return (
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '40px 20px', animation: 'fadeInUp 0.5s ease-out' }}>
             <h2 style={{ color: '#ffffff', fontSize: '32px', marginBottom: '8px' }}>Kinetic <span style={{ color: '#dc2626' }}>Training Hub</span></h2>
@@ -849,25 +787,9 @@ const ExercisePageView = () => {
                         key={trainer.id}
                         onMouseEnter={() => setTrainerHover(trainer.id)}
                         onMouseLeave={() => setTrainerHover(null)}
-                        style={{
-                            backgroundColor: '#1f2937',
-                            padding: '28px',
-                            borderRadius: '12px',
-                            border: trainerHover === trainer.id ? `1px solid ${trainer.color}` : '1px solid #374151',
-                            position: 'relative',
-                            display: 'flex',
-                            gap: '20px',
-                            transition: 'all 0.25s ease',
-                            transform: trainerHover === trainer.id ? 'translateY(-4px)' : 'translateY(0)',
-                            boxShadow: trainerHover === trainer.id ? '0 12px 22px rgba(0,0,0,0.35)' : 'none',
-                            animation: `fadeInUp 0.45s ease-out ${i * 0.08}s backwards`
-                        }}
+                        style={{ backgroundColor: '#1f2937', padding: '28px', borderRadius: '12px', border: trainerHover === trainer.id ? `1px solid ${trainer.color}` : '1px solid #374151', position: 'relative', display: 'flex', gap: '20px', transition: 'all 0.25s ease', transform: trainerHover === trainer.id ? 'translateY(-4px)' : 'translateY(0)', boxShadow: trainerHover === trainer.id ? '0 12px 22px rgba(0,0,0,0.35)' : 'none', animation: `fadeInUp 0.45s ease-out ${i * 0.08}s backwards` }}
                     >
-                        <img
-                            src={`https://picsum.photos/seed/${trainer.avatar}/200/200`}
-                            alt={trainer.name}
-                            style={{ width: '76px', height: '76px', borderRadius: '50%', objectFit: 'cover', flexShrink: 0, border: `2px solid ${trainer.color}` }}
-                        />
+                        <img src={trainer.avatar} alt={trainer.name} onError={(e) => { e.target.src = fallbackImg; }} style={{ width: '76px', height: '76px', borderRadius: '50%', objectFit: 'cover', flexShrink: 0, border: `2px solid ${trainer.color}` }} />
                         <div style={{ flexGrow: 1 }}>
                             <span style={{ position: 'absolute', top: '20px', right: '24px', backgroundColor: '#111827', color: trainer.color, border: `1px solid ${trainer.color}`, padding: '4px 12px', borderRadius: '50px', fontSize: '11px', fontWeight: 'bold', textTransform: 'uppercase' }}>{trainer.tag}</span>
                             <h4 style={{ color: '#ffffff', margin: '0 0 4px 0', fontSize: '20px' }}>{trainer.name}</h4>
@@ -885,28 +807,12 @@ const ExercisePageView = () => {
                         key={idx}
                         onMouseEnter={() => setVideoHover(idx)}
                         onMouseLeave={() => setVideoHover(null)}
-                        style={{
-                            backgroundColor: '#111827',
-                            borderRadius: '8px',
-                            border: videoHover === idx ? '1px solid #dc2626' : '1px solid #374151',
-                            overflow: 'hidden',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            justifyContent: 'space-between',
-                            transition: 'all 0.25s ease',
-                            transform: videoHover === idx ? 'translateY(-4px)' : 'translateY(0)',
-                            boxShadow: videoHover === idx ? '0 10px 20px rgba(0,0,0,0.35)' : 'none',
-                            animation: `fadeInUp 0.4s ease-out ${idx * 0.06}s backwards`
-                        }}
+                        style={{ backgroundColor: '#111827', borderRadius: '8px', border: videoHover === idx ? '1px solid #dc2626' : '1px solid #374151', overflow: 'hidden', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', transition: 'all 0.25s ease', transform: videoHover === idx ? 'translateY(-4px)' : 'translateY(0)', boxShadow: videoHover === idx ? '0 10px 20px rgba(0,0,0,0.35)' : 'none', animation: `fadeInUp 0.4s ease-out ${idx * 0.06}s backwards` }}
                     >
                         <div style={{ position: 'relative', height: '140px', overflow: 'hidden' }}>
-                            <img
-                                src={`https://picsum.photos/seed/${vid.thumb}/480/300`}
-                                alt={vid.title}
-                                style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.4s ease', transform: videoHover === idx ? 'scale(1.08)' : 'scale(1)' }}
-                            />
+                            <img src={vid.thumb} alt={vid.title} onError={(e) => { e.target.src = fallbackImg; }} style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.4s ease', transform: videoHover === idx ? 'scale(1.08)' : 'scale(1)' }} />
                             <div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(15,23,42,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                <span style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: 'rgba(220,38,38,0.9)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px' }}>▶</span>
+                                <span style={{ color: '#fff', fontSize: '12px', fontWeight: 'bold', backgroundColor: 'rgba(220,38,38,0.9)', padding: '6px 12px', borderRadius: '6px' }}>PLAY</span>
                             </div>
                             <span style={{ position: 'absolute', bottom: '8px', right: '8px', color: '#fff', fontSize: '11px', backgroundColor: 'rgba(0,0,0,0.65)', padding: '2px 8px', borderRadius: '4px' }}>{vid.duration}</span>
                             <span style={{ position: 'absolute', top: '8px', left: '8px', color: '#dc2626', fontFamily: 'monospace', fontSize: '11px', fontWeight: 'bold', backgroundColor: 'rgba(0,0,0,0.65)', padding: '2px 8px', borderRadius: '4px' }}>STREAM_0{idx + 1}</span>
@@ -930,9 +836,36 @@ const SignupPageView = () => {
     const [vector, setVector] = useState('longevity');
     const [submitted, setSubmitted] = useState(false);
 
-    const handleSignupSubmit = (e) => {
+    const handleSignupSubmit = async (e) => {
         e.preventDefault();
-        setSubmitted(true);
+        
+        const payload = {
+            username: name,
+            email: email,
+            password: password,
+            target_vector: vector
+        };
+
+        try {
+            const response = await fetch("http://127.0.0.1:8000/api/signup/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(payload),
+            });
+
+            if (response.ok) {
+                setSubmitted(true);
+            } else {
+                const errorData = await response.json();
+                console.error("Validation Error:", errorData);
+                alert("Registration failed. Check console for details.");
+            }
+        } catch (error) {
+            console.error("Network error:", error);
+            alert("Fatal Error: Could not connect to the database.");
+        }
     };
 
     return (
@@ -969,10 +902,10 @@ const SignupPageView = () => {
                 </div>
             ) : (
                 <div style={{ backgroundColor: '#111827', border: '2px solid #10b981', padding: '40px', borderRadius: '12px', textAlign: 'center' }}>
-                    <div style={{ fontSize: '48px', marginBottom: '16px' }}>🚀</div>
+                    <div style={{ fontSize: '16px', fontWeight: 'bold', color: '#10b981', marginBottom: '16px', letterSpacing: '2px' }}>[ SYSTEM_READY ]</div>
                     <h3 style={{ color: '#10b981', margin: '0 0 12px 0', fontSize: '24px', fontWeight: 'bold' }}>Profile Staged Successfully</h3>
                     <p style={{ color: '#9ca3af', fontSize: '14px', lineHeight: '1.6', margin: '0 0 24px 0' }}> Welcome to the unit, <strong>{name}</strong>. Your access keypack has been built. Your target vector [<strong>{vector.toUpperCase()}</strong>] is now live inside the localized state engine.</p>
-                    <div style={{ fontSize: '11px', fontFamily: 'monospace', color: '#64748b', backgroundColor: '#1f2937', padding: '12px', borderRadius: '6px', textTransform: 'lowercase' }}>STATUS: AWAITING_PRODUCTION_DATABASE_PIPE</div>
+                    <div style={{ fontSize: '11px', fontFamily: 'monospace', color: '#64748b', backgroundColor: '#1f2937', padding: '12px', borderRadius: '6px', textTransform: 'uppercase' }}>DATABASE_SYNC_COMPLETE : RECORD_ACTIVE</div>
                 </div>
             )}
         </div>
@@ -991,18 +924,35 @@ const FeedbackPortal = () => {
     const [email, setEmail] = useState('');
     const [comment, setComment] = useState('');
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        alert(`Telemetry Ingested!\nEmail: ${email}\nComment: ${comment}`);
-        setEmail('');
-        setComment('');
-        setIsOpen(false);
+        const payload = { email: email, comment: comment };
+
+        try {
+            const response = await fetch("http://127.0.0.1:8000/api/feedback/", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload),
+            });
+
+            if (response.ok) {
+                alert("Telemetry Ingested Successfully!");
+                setEmail('');
+                setComment('');
+                setIsOpen(false);
+            } else {
+                alert("Transmission Error: Verify backend server is running.");
+            }
+        } catch (error) {
+            console.error("Network error:", error);
+            alert("Fatal Error: Could not connect to the database.");
+        }
     };
 
     return (
         <div style={{ position: 'fixed', bottom: '24px', right: '24px', zIndex: 1000, fontFamily: 'sans-serif' }}>
             {!isOpen ? (
-                <button onClick={() => setIsOpen(true)} style={{ backgroundColor: '#dc2626', color: '#ffffff', border: 'none', borderRadius: '50px', padding: '14px 24px', fontWeight: 'bold', cursor: 'pointer', boxShadow: '0 4px 14px rgba(220, 38, 38, 0.4)' }}>💬 System Feedback</button>
+                <button onClick={() => setIsOpen(true)} style={{ backgroundColor: '#dc2626', color: '#ffffff', border: 'none', borderRadius: '50px', padding: '14px 24px', fontWeight: 'bold', cursor: 'pointer', boxShadow: '0 4px 14px rgba(220, 38, 38, 0.4)' }}>System Feedback</button>
             ) : (
                 <div style={{ backgroundColor: '#1f2937', border: '2px solid #dc2626', borderRadius: '12px', padding: '24px', width: '320px', boxShadow: '0 10px 25px rgba(0,0,0,0.5)', position: 'fixed', bottom: '84px', right: '24px', boxSizing: 'border-box', maxHeight: 'calc(100vh - 120px)', overflowY: 'auto' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
@@ -1028,17 +978,13 @@ const FeedbackPortal = () => {
 
 export default function Page() {
     const [currentPage, setCurrentPage] = useState('home');
-
     return (
         <div style={{ backgroundColor: '#0f172a', minHeight: '100vh', color: '#f8fafc', fontFamily: 'sans-serif', paddingBottom: '100px' }}>
-
-            {/* INJECTED: INLINE CSS ANIMATION ENGINE STYLES */}
             <style jsx global>{`
                 @keyframes fadeInUp {
                     from { opacity: 0; transform: translateY(16px); }
                     to { opacity: 1; transform: translateY(0); }
                 }
-                /* Accessibility: visible keyboard focus on every interactive element */
                 button:focus-visible,
                 a:focus-visible,
                 input:focus-visible,
@@ -1047,7 +993,6 @@ export default function Page() {
                     outline: 2px solid #dc2626;
                     outline-offset: 2px;
                 }
-                /* Accessibility: respect users who have disabled motion */
                 @media (prefers-reduced-motion: reduce) {
                     *, *::before, *::after {
                         animation-duration: 0.01ms !important;
@@ -1058,14 +1003,9 @@ export default function Page() {
                 @media (max-width: 900px) {
                     nav > div { gap: 14px !important; }
                 }
-                /* Stack the Exercise Library sidebar above the grid on narrow screens. */
                 @media (max-width: 760px) {
-                    .exercise-library-layout {
-                        flex-direction: column;
-                    }
-                    .exercise-library-sidebar {
-                        width: 100% !important;
-                    }
+                    .exercise-library-layout { flex-direction: column; }
+                    .exercise-library-sidebar { width: 100% !important; }
                 }
             `}</style>
 
@@ -1074,7 +1014,7 @@ export default function Page() {
             {currentPage === 'home' ? <HomePageView setCurrentPage={setCurrentPage} /> :
              currentPage === 'blog' ? <BlogPageView /> :
              currentPage === 'facts' ? <FactsPageView /> :
-             currentPage === 'diets' ? null : // Handled manually below
+             currentPage === 'diets' ? null : 
              currentPage === 'exercise' ? <ExercisePageView /> :
              currentPage === 'signup' ? <SignupPageView /> :
              <UnderConstructionView pageName={currentPage} />}
